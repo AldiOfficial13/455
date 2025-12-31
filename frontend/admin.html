@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Aldi Official Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Aldi Gaji">
+    <meta name="msapplication-TileImage" content="assets/images/icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#4CAF50">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="assets/images/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="assets/images/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/images/icon-512x512.png">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="https://via.placeholder.com/50x50/4CAF50/white?text=Aldi" alt="Logo">
+                <h3>Aldi Official Store</h3>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="#" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('users')">
+                        <i class="fas fa-users"></i> Kelola User
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('gaji')">
+                        <i class="fas fa-money-bill-wave"></i> Data Gaji
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('statistik')">
+                        <i class="fas fa-chart-bar"></i> Statistik
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <h1>Selamat Datang, <span id="adminName">Admin</span></h1>
+                <div class="header-actions">
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="pendingCount">0</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total User</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalGaji">Rp 0</h3>
+                            <p>Total Gaji Dibayar</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="bulanIni">Rp 0</h3>
+                            <p>Bulan Ini</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-pending"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingApproval">0</h3>
+                            <p>Menunggu Persetujuan</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h2>Grafik Pengambilan Gaji</h2>
+                    <canvas id="gajiChart"></canvas>
+                </div>
+            </section>
+            
+            <!-- Users Section -->
+            <section id="users-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Kelola User</h2>
+                    <button class="btn-primary" onclick="showAddUserModal()">
+                        <i class="fas fa-plus"></i> Tambah User
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Data akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Gaji Section -->
+            <section id="gaji-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Data Pengambilan Gaji</h2>
+                    <button class="btn-primary" onclick="showAddGajiModal()">
+                        <i class="fas fa-plus"></i> Tambah Data
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Nama</th>
+                                <th>Jumlah Gaji</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gajiTableBody">
+                            <!-- Data akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Statistik Section -->
+            <section id="statistik-section" class="content-section" style="display: none;">
+                <h2>Statistik Pendapatan</h2>
+                <div class="chart-grid">
+                    <div class="chart-item">
+                        <h3>Gaji per Bulan</h3>
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                    <div class="chart-item">
+                        <h3>Distribusi Role</h3>
+                        <canvas id="roleChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Modal Tambah User -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+            <h2>Tambah User Baru</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="newUserNama" required>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="newUserUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="newUserPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="newUserRole" required>
+                        <option value="karyawan">Karyawan</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Simpan</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal Tambah Gaji -->
+    <div id="addGajiModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addGajiModal')">&times;</span>
+            <h2>Tambah Data Gaji</h2>
+            <form id="addGajiForm">
+                <div class="form-group">
+                    <label>Nama Karyawan</label>
+                    <select id="gajiUserId" required>
+                        <!-- Options akan diisi oleh JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Jumlah Gaji</label>
+                    <input type="number" id="gajiJumlah" required>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan</label>
+                    <textarea id="gajiKeterangan" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Simpan</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script src="js/chart.js"></script>
+    <script src="js/chat-ai.js"></script>
+    <script src="js/pwa.js"></script>
+    <script src="js/android-features.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</body>
+</html>
